@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Companion</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+  <!-- NAME MODAL -->
+  <div id="nameModal" class="hidden">
+    <div class="modal-box">
+      <h2><span class="brand-primary">Student</span> <span class="brand-secondary">Companion</span></h2>
+      <p>What should we call you?</p>
+      <input type="text" id="nameInput" placeholder="Your name" maxlength="40" />
+      <button onclick="saveName()">Get Started</button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <h1><span class="brand-primary">Student</span> <span class="brand-secondary">Companion</span></h1>
+    <div class="header-right">
+      <div class="header-date" id="headerDate"></div>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+      
+    </div>
+  </header>
+
+  <!-- DESKTOP NAV -->
+  <nav>
+    <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
+    <button class="nav-btn" onclick="showSection('tasks')">Tasks</button>
+    <button class="nav-btn" onclick="showSection('timetable')">Timetable</button>
+    <button class="nav-btn" onclick="showSection('grades')">Grades</button>
+    <button class="nav-btn" onclick="showSection('notes')">Notes</button>
+    <button class="nav-btn" onclick="showSection('slides')">Slides</button>
+    <button class="nav-btn" onclick="showSection('help')">Help</button>
+  </nav>
+
+  
+
+  <main>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="section active">
+      <div class="greeting-block">
+        <h2 id="greetingText">Hello</h2>
+        <p class="sub" id="dashDate"></p>
+      </div>
+      <div class="card-row">
+        <div class="stat-card">
+          <span class="stat-number" id="taskCount">0</span>
+          <span class="stat-label">Tasks Pending</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="courseCount">0</span>
+          <span class="stat-label">Courses</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="avgGrade">-</span>
+          <span class="stat-label">GPA</span>
+        </div>
+      </div>
+      <div class="quick-note-box">
+        <h3>Quick Reminder</h3>
+        <p id="quickReminder">No pending tasks. Keep it up.</p>
+      </div>
+    </section>
+
+    <!-- TASKS -->
+    <section id="tasks" class="section">
+      <h2>My Tasks</h2>
+      <div class="form-box">
+        <div class="form-row">
+          <div class="field">
+            <label>Task name</label>
+            <input type="text" id="taskInput" placeholder="e.g. Assignment 1" />
+          </div>
+          <div class="field">
+            <label>Due date</label>
+            <input type="date" id="taskDate" />
+          </div>
+          <div class="field">
+            <label>Priority</label>
+            <select id="taskPriority">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="addTask()">Add Task</button>
+      </div>
+      <ul id="taskList" class="item-list"></ul>
+    </section>
+
+    <!-- TIMETABLE -->
+    <section id="timetable" class="section">
+      <h2>Weekly Timetable</h2>
+
+      <div class="tt-controls">
+        <div class="tt-name-area">
+          <span class="tt-name-label">Name:</span>
+          <input class="tt-name-input" type="text" id="ttName" value="My Weekly Schedule" />
+        </div>
+        <div class="tt-right">
+          <div class="tt-day-toggles">
+            <label class="tt-day-toggle">
+              <input type="checkbox" id="showSat" onchange="updateDayColumns()" />
+              <span>Sat</span>
+            </label>
+            <label class="tt-day-toggle">
+              <input type="checkbox" id="showSun" onchange="updateDayColumns()" />
+              <span>Sun</span>
+            </label>
+          </div>
+          <button class="pdf-btn" onclick="exportTimetablePDF()">Export PDF</button>
+        </div>
+      </div>
+
+      <div class="form-box">
+        <div class="form-row">
+          <div class="field">
+            <label>Day</label>
+            <select id="classDay">
+              <option>Monday</option>
+              <option>Tuesday</option>
+              <option>Wednesday</option>
+              <option>Thursday</option>
+              <option>Friday</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Course</label>
+            <input type="text" id="className" placeholder="e.g. MATH 121" />
+          </div>
+          <div class="field">
+            <label>Start time</label>
+            <input type="time" id="classTime" />
+          </div>
+          <div class="field">
+            <label>Duration</label>
+            <select id="classDuration">
+              <option value="0.5">30 min</option>
+              <option value="1" selected>1 hour</option>
+              <option value="1.5">1.5 hours</option>
+              <option value="2">2 hours</option>
+              <option value="2.5">2.5 hours</option>
+              <option value="3">3 hours</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Venue</label>
+            <input type="text" id="classRoom" placeholder="e.g. Great Hall" />
+          </div>
+        </div>
+        <button class="btn-submit" onclick="addClass()">Add Class</button>
+      </div>
+
+      <div class="tt-table-wrapper">
+        <table class="tt-table">
+          <thead>
+            <tr id="ttHeaderRow">
+              <th>Time</th>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+            </tr>
+          </thead>
+          <tbody id="ttBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- GRADES -->
+    <section id="grades" class="section">
+      <h2>Grade Tracker</h2>
+      <div class="form-box">
+        <div class="form-row">
+          <div class="field">
+            <label>Course code</label>
+            <input type="text" id="courseName" placeholder="e.g. DCIT 101" />
+          </div>
+          <div class="field">
+            <label>Score (0–100)</label>
+            <input type="number" id="courseScore" placeholder="e.g. 78" min="0" max="100" />
+          </div>
+          <div class="field">
+            <label>Credit hours</label>
+            <input type="number" id="courseCredits" placeholder="e.g. 3" min="1" max="6" />
+          </div>
+        </div>
+        <button class="btn-submit" onclick="addGrade()">Add Grade</button>
+      </div>
+      <div class="gpa-display">
+        <span>Cumulative GPA</span>
+        <strong id="gpaValue">0.00</strong>
+      </div>
+      <ul id="gradeList" class="item-list"></ul>
+    </section>
+
+    <!-- NOTES -->
+    <section id="notes" class="section">
+      <h2>Quick Notes</h2>
+      <div class="form-box">
+        <div class="field">
+          <label>Title</label>
+          <input type="text" id="noteTitle" placeholder="Note title" />
+        </div>
+        <div class="field">
+          <label>Content</label>
+          <textarea id="noteBody" placeholder="Write your note here..." rows="3"></textarea>
+        </div>
+        <button class="btn-submit" onclick="addNote()">Save Note</button>
+      </div>
+      <div id="notesList" class="notes-grid"></div>
+    </section>
+
+    <!-- SLIDES -->
+    <section id="slides" class="section">
+      <h2>Subject Slides</h2>
+      <div class="upload-area" id="uploadArea"
+           onclick="document.getElementById('slideFileInput').click()"
+           ondragover="handleDragOver(event)"
+           ondragleave="handleDragLeave(event)"
+           ondrop="handleDrop(event)">
+        <div class="upload-icon">📂</div>
+        <p>Click to upload or drag and drop files here</p>
+        <span>PDF, PPTX, DOCX, images — any file type</span>
+      </div>
+      <input type="file" id="slideFileInput" multiple onchange="handleFileSelect(event)" />
+      <div id="slidesTagFilter" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+      <div id="slidesList" class="slides-grid"></div>
+    </section>
+
+    <!-- HELP -->
+    <section id="help" class="section">
+      <h2>How to use Student Companion</h2>
+      <div class="help-section">
+
+        <div class="help-card">
+          <div class="help-card-title">Dashboard</div>
+          <p>Your home screen. Shows pending tasks, course count, and current GPA at a glance. The reminder updates based on how many tasks you still have open.</p>
+        </div>
+
+        <div class="help-card">
+          <div class="help-card-title">Tasks</div>
+          <p>Add any assignment or to-do with a name, due date, and priority level. Mark items done with the Done button — they get crossed out but stay visible. The pending count feeds into your dashboard.</p>
+        </div>
+
+        <div class="help-card">
+          <div class="help-card-title">Timetable</div>
+          <p>Build your weekly schedule by picking a day, entering a course name, setting a start time, choosing a duration (30 min up to 3 hours), and optionally adding a venue. Classes appear in a grid with days across the top and times on the left. Turn on Saturday and Sunday with the toggles at the top. Give your timetable a name, then hit Export PDF for a clean printable copy.</p>
+        </div>
+
+        <div class="help-card">
+          <div class="help-card-title">Grade Tracker</div>
+          <p>Enter each course code, your score out of 100, and the credit hours. The app converts your score to a letter grade and grade points using the UG grading scale, then calculates your weighted GPA automatically.</p>
+          <div class="scale-table">
+            <strong style="color:var(--text);display:block;margin-bottom:4px;">UG Grading Scale</strong>
+            A (80–100, 4.0) &nbsp;·&nbsp; B+ (75–79, 3.5) &nbsp;·&nbsp; B (70–74, 3.0) &nbsp;·&nbsp;
+            C+ (65–69, 2.5) &nbsp;·&nbsp; C (60–64, 2.0) &nbsp;·&nbsp; D+ (55–59, 1.5) &nbsp;·&nbsp;
+            D (50–54, 1.0) &nbsp;·&nbsp; F (0–49, 0.0)
+          </div>
+        </div>
+
+        <div class="help-card">
+          <div class="help-card-title">Notes</div>
+          <p>Save quick reminders, ideas, or study summaries as titled cards. Remove any note with the × button.</p>
+        </div>
+
+        <div class="help-card">
+          <div class="help-card-title">Slides</div>
+          <p>Upload lecture slides or any course material by clicking the upload area or dragging files onto it. You can upload multiple files at once. Each file prompts you to tag it with a course name for easy filtering. Files are stored in your browser and can be opened or downloaded at any time.</p>
+        </div>
+
+        <div class="help-card">
+          <div class="help-card-title">Data & Privacy</div>
+          <p>Everything is saved in your browser's local storage on your own device — nothing is sent anywhere. Clearing your browser's site data will erase it, so use the timetable PDF export as a backup for your schedule.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
